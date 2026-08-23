@@ -1,0 +1,38 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+const int SDA_LCD = 25;
+const int SCL_LCD = 26;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+void setup() {
+  Wire.begin(SDA_LCD, SCL_LCD);
+
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0, 0);
+  lcd.print("NeuroVoice");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Sistem pornit");
+}
+
+void loop() {
+  delay(2000);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Raspuns:");
+  lcd.setCursor(0, 1);
+  lcd.print("DA");
+
+  delay(2000);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Raspuns:");
+  lcd.setCursor(0, 1);
+  lcd.print("NU");
+}
