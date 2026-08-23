@@ -1,8 +1,8 @@
 # NeuroVoice
 
-NeuroVoice este un proiect care ajută persoanele care nu pot vorbi să răspundă cu DA sau NU folosind semnale EEG.
+NeuroVoice is a project that helps non-verbal individuals answer with YES or NO using EEG signals.
 
-Pe ecran apar două zone care pâlpâie: DA la 10 Hz și NU la 15 Hz. Persoana privește răspunsul dorit, iar ESP32 analizează semnalul primit prin ADS1115. Interfața folosește răspunsurile pentru a forma și rosti un mesaj, de exemplu: „Am nevoie de apă”.
+Two flickering areas appear on the screen: YES at 10 Hz and NO at 15 Hz. The person looks at the desired response, and the ESP32 analyzes the signal received via the ADS1115. The interface uses the responses to build and speak a message, for example: "I need water".
 
-Componentele folosite sunt ESP32, ADS1115, un amplificator EEG și electrozi.
+The components used are an ESP32, an ADS1115, an EEG amplifier, and electrodes.
 
