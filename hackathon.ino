@@ -1,8 +1,13 @@
 #include <Wire.h>
 #include <Adafruit_ADS1X15.h>
 #include <arduinoFFT.h>
-
+#include <LiquidCrystal_I2C.h>
 Adafruit_ADS1115 ads;
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
+TwoWire eegWire(1);
+
+const int SDA_PIN = 25;
+const int SCL_PIN = 26;
 
 const int sda = 21;
 const int scl = 22;
@@ -27,13 +32,13 @@ const float yes_hz = 10.0;
 const float no_hz = 15.0;
 const float banda_wi = 1.5;
 const float banda_we = 1.5;
-const float harmon_we = 0.55;
+const float harmon_we = 0.0;
 
 const float nivel_detectie = 1.35;
-const float ratie_min = 1.25;
+const float ratie_min = 1.40;
 const float power_min = 0.035;
 
-const int pasi_calibrare = 5;
+const int pasi_calibrare = 10;
 float baseline10 = 0;
 float baseline15 = 0;
 int calibration_index = 0;
@@ -81,6 +86,13 @@ void calibrare(float power10, float power15) {
   Serial.print(calibration_index);
   Serial.print("/");
   Serial.println(pasi_calibrare);
+  lcd.setCursor(0, 0);
+lcd.print("                ");
+
+lcd.setCursor(0, 1);
+lcd.print("                ");
+  lcd.setCursor(0,0);
+  lcd.print("calibrat");
 
   if (calibration_index >= pasi_calibrare) {
     baseline10 /= pasi_calibrare;
@@ -101,10 +113,34 @@ void calibrare(float power10, float power15) {
 
 
 void sendDetection(int frequency, float confidence) {
+  String raspuns = "";
+
+  if (frequency == 10) {
+    raspuns = "DA";
+  } else if (frequency == 15) {
+    raspuns = "NU";
+  } else {
+    return;
+  }
+
   Serial.print("SSVEP:");
   Serial.print(frequency);
   Serial.print(",CONF:");
   Serial.println(confidence, 2);
+
+  Serial.print("RASPUNS: ");
+  Serial.println(raspuns);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("RASPUNS: ");
+  lcd.print(raspuns);
+
+  lcd.setCursor(0, 1);
+  lcd.print("Siguranta:");
+  lcd.print(confidence * 100, 0);
+  lcd.print("%");
+  delay(2000);
 }
 
 
@@ -121,11 +157,37 @@ void detectssvep(float power10, float power15) {
       winner / max(score10 + score15, 0.000000001f);
 
   Serial.print("10:");
+  
   Serial.print(score10, 2);
   Serial.print(" 15:");
+  
+ 
   Serial.print(score15, 2);
   Serial.print(" r:");
   Serial.println(ratie, 2);
+lcd.setCursor(0, 0);
+lcd.print("                ");
+
+lcd.setCursor(0, 1);
+lcd.print("                ");
+delay(5);
+  lcd.setCursor(0, 0);
+lcd.print("10:");
+
+lcd.setCursor(3, 0);
+lcd.print(score10, 2);
+
+lcd.setCursor(8, 0);
+lcd.print("15:");
+
+lcd.setCursor(11, 0);
+lcd.print(score15, 2);
+
+lcd.setCursor(0, 1);
+lcd.print("r:");
+
+lcd.setCursor(2, 1);
+lcd.print(ratie, 2);
 
   if (!armed) {
     if (winner < 1.30 || ratie < 1.12) {
@@ -266,11 +328,21 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
 
-  Wire.begin(sda, scl);
-  Wire.setClock(400000);
+  Wire.begin(SDA_PIN, SCL_PIN);
+  Wire.setClock(100000);
 
-  if (!ads.begin(0x48)) {
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("NeuroVoice");
+
+  eegWire.begin(sda, scl, 400000);
+
+  if (!ads.begin(0x48, &eegWire)) {
     Serial.println("ADS1115 nu raspunde");
+
+    lcd.setCursor(0, 1);
+    lcd.print("ADS lipsa");
 
     while (true) {
       delay(1000);
@@ -280,12 +352,14 @@ void setup() {
   ads.setGain(GAIN_ONE);
   ads.setDataRate(RATE_ADS1115_860SPS);
 
+  lcd.setCursor(0, 1);
+  lcd.print("Calibrare...");
+
   Serial.println("NeuroVoice");
   Serial.println("calibrare");
 
   samplen = micros();
 }
-
 
 void loop() {
   if (Serial.available()) {
