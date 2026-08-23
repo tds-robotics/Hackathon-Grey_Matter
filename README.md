@@ -6,3 +6,11 @@ Two flickering areas appear on the screen: YES at 8 Hz and NO at 15 Hz. The pers
 
 The components used are an ESP32, an ADS1115, an EEG amplifier, and electrodes.
 
+## Documentation
+
+
+  ### Used libraries
+
+- [Adafruit ADS1X15](https://github.com/adafruit/Adafruit_ADS1X15)
+- [arduinoFFT](https://github.com/kosme/arduinoFFT)
+- [LiquidCrystal I2C](https://docs.arduino.cc/libraries/liquidcrystal-i2c/)
