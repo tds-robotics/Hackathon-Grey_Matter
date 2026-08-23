@@ -9,7 +9,7 @@ The components used are an ESP32, an ADS1115, an EEG amplifier, and electrodes.
 ## Documentation
 
 
-  ### Used libraries
+  ### Used libraries&&Infos
 
 - [Adafruit ADS1X15](https://github.com/adafruit/Adafruit_ADS1X15)
 - [arduinoFFT](https://github.com/kosme/arduinoFFT)
